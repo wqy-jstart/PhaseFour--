@@ -66,9 +66,9 @@ public class AdminMapperTests {
             admin.setUsername("武清源"+i);
             admin.setPassword("123456");
             admin.setNickname("Devotion");
-            admin.setAvatar("342311kgrfgrepg");
-            admin.setPhone("15551898017");
-            admin.setEmail("2168149199@qq.com");
+            admin.setAvatar("https://img2.baidu.com/it/u=4244269751,4000533845&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500");
+            admin.setPhone("15551898017"+i);
+            admin.setEmail("2168149199@qq.com"+i);
             admin.setDescription("无");
             admin.setEnable(1);
             admin.setLastLoginIp("宁波");

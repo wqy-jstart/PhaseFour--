@@ -24,6 +24,8 @@ public class AdminAddNewDTO implements Serializable {
     private String email;
     @ApiModelProperty("描述")
     private String description;
-    @ApiModelProperty("是否启用")
+    @ApiModelProperty(value = "是否启用",required = true)
     private Integer enable;
+    @ApiModelProperty(value = "角色id数组",required = true)
+    private Long[] roleIds;
 }

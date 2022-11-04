@@ -2,10 +2,11 @@ package cn.tedu.csmall.passport.pojo.vo;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class AdminStandardVO {
+public class AdminStandardVO implements Serializable {
     /**
      * ID
      */

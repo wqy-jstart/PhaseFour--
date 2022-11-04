@@ -27,11 +27,16 @@ public class AdminController {
     @Autowired
     IAdminService adminService;
 
+    public AdminController() {
+        log.info("创建控制器对象：AdminController");
+    }
+
     /**
      * 处理添加管理员的请求
      * @param adminAddNewDTO 接收传入的管理员数据
      * @return 返回JsonResult对象(包含状态码,和反馈信息)
      */
+    // http://localhost:9081/admins/add-new
     @ApiOperation("添加管理员")
     @ApiOperationSupport(order = 100)
     @PostMapping("/add-new")
@@ -45,6 +50,7 @@ public class AdminController {
      * @param id 要删除的管理员id
      * @return 返回JsonResult
      */
+    // http://localhost:9081/adminsid/delete
     @ApiOperation("根据id删除管理员")
     @ApiOperationSupport(order = 200)
     @ApiImplicitParam(name = "id",value = "管理员id",required = true,dataType = "long")
@@ -59,12 +65,47 @@ public class AdminController {
      * 处理查询管理员列表的请求
      * @return JsonResult
      */
+    // http://localhost:9081/admins
     @ApiOperation("管理员列表")
-    @ApiOperationSupport(order = 410)//排序
+    @ApiOperationSupport(order = 210)//排序
     @GetMapping("")
     public JsonResult<List<AdminListItemVO>> list(){
         log.debug("开始处理[查询管理员列表]的请求,无参数");
         List<AdminListItemVO> list = adminService.list();
         return JsonResult.ok(list);
+    }
+
+    /**
+     * 处理启用管理员的业务
+     * @param id 要启用的管理员id
+     * @return 返回JsonResult
+     */
+    // http://localhost:9081/admins/id/enable
+    @ApiOperation("启用管理员")
+    @ApiOperationSupport(order = 310)
+    @ApiImplicitParam(name = "id",value = "启用的管理员id",required = true,dataType = "long")
+    @PostMapping("/{id:[0-9]+}/enable")
+    public JsonResult<Void> setEnable(@Range(min = 1,message = "启用管理员失败,尝试启用的id无效!")
+                                          @PathVariable Long id){
+        log.debug("开始将id为{}的管理员设置为启用状态",id);
+        adminService.setEnable(id);
+        return JsonResult.ok();
+    }
+
+    /**
+     * 处理禁用管理员的业务
+     * @param id 要禁用的管理员id
+     * @return 返回JsonResult
+     */
+    // http://localhost:9081/admins/id/disable
+    @ApiOperation("禁用管理员")
+    @ApiOperationSupport(order = 311)
+    @ApiImplicitParam(name = "id",value = "禁用的管理员id",required = true,dataType = "long")
+    @PostMapping("/{id:[0-9]+}/disable")
+    public JsonResult<Void> setDisable(@Range(min = 1,message = "禁用管理员失败,尝试启用的id无效!")
+                                           @PathVariable Long id){
+        log.debug("开始将id为{}的管理员设置为禁用状态",id);
+        adminService.setDisable(id);
+        return JsonResult.ok();
     }
 }

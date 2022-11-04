@@ -6,9 +6,9 @@
     <!-- int insert(Admin admin);-->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO ams_admin(username, password, nickname, avatar, phone, email, description,
-                              enable, last_login_ip, login_count)
-                               VALUES (#{username}, #{password}, #{nickname}, #{avatar}, #{phone}, #{email}, #{description},
-        #{enable}, #{lastLoginIp}, #{loginCount})
+                              enable, last_login_ip, login_count
+        )VALUES (#{username}, #{password}, #{nickname}, #{avatar}, #{phone}, #{email}, #{description},
+                 #{enable}, #{lastLoginIp}, #{loginCount})
     </insert>
 
     <!--int countByUsername(String username);-->
