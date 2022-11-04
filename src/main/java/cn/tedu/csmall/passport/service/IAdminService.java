@@ -16,8 +16,26 @@ public interface IAdminService {
     void adNew(AdminAddNewDTO adminAddNewDTO);
 
     /**
+     * 根据id删除管理员
+     * @param id 要删除的管理员id
+     */
+    void  delete(Long id);
+
+    /**
      * 查询管理员列表的方法
      * @return List
      */
     List<AdminListItemVO> list();
+
+    /**
+     * 启用管理员
+     * @param id 启用的管理员id
+     */
+    void setEnable(Long id);
+
+    /**
+     * 禁用管理员
+     * @param id 禁用的管理员id
+     */
+    void setDisable(Long id);
 }

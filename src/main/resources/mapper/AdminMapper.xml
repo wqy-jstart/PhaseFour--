@@ -32,9 +32,11 @@
             <include refid="ListQueryFields"/>
         FROM
             ams_admin
-        ORDER BY id
+        ORDER BY
+                 id
     </select>
 
+    <!--封装字段列表-->
     <sql id="ListQueryFields">
         <if test="true">
             id,username, nickname, avatar, phone, email, description,

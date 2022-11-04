@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+
 @Slf4j
 @SpringBootTest
 public class AdminServiceTests {
@@ -35,5 +37,25 @@ public class AdminServiceTests {
         }catch (ServiceException e){
             log.debug(e.getMessage());
         }
+    }
+
+    @Test
+    void delete(){
+        Long id = 14L;
+        adminService.delete(id);
+        log.debug("删除成功!");
+    }
+
+    @Test
+    void list(){
+        List<?> list = adminService.list();
+        for (Object item : list) {
+            log.debug("{}",item);
+        }
+    }
+
+    @Test
+    void setDisable(){
+        adminService.setEnable(12L);//将id为12设为启用
     }
 }
