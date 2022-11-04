@@ -218,6 +218,6 @@ public class AdminServiceImpl implements IAdminService {
             String message = tips[enable] + "管理员失败，服务器忙，请稍后再次尝试！";
             throw new ServiceException(ServiceCode.ERR_UPDATE, message);
         }
-        log.debug("设置成功!");
+        log.debug("修改成功!");
     }
 }
