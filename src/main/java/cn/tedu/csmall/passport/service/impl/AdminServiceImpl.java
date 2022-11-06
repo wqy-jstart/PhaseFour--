@@ -39,7 +39,7 @@ public class AdminServiceImpl implements IAdminService {
      */
     @Override
     public void adNew(AdminAddNewDTO adminAddNewDTO) {
-        log.debug("开始处理添加[添加管理员]的业务!");
+        log.debug("开始处理添加[添加管理员]的业务!,参数：{}",adminAddNewDTO);
 
         log.debug("即将检查用户名是否被占用……");
         int selectByUsername = adminMapper.countByUsername(adminAddNewDTO.getUsername());
@@ -82,10 +82,10 @@ public class AdminServiceImpl implements IAdminService {
         /*
          执行插入管理员与角色关联的数据
          条件:
-         (1).上次插入管理员后获取的id
+         (1).上次插入管理员后获取的roleIds=[?,?,?]
          (2).选择的角色对应的id数组
          */
-        Long[] roleIds = adminAddNewDTO.getRoleIds();// 获取客户端选择角色传入的多个角色id
+        Long[] roleIds = adminAddNewDTO.getRoleIds();// 获取客户端选择角色传入的多个角色roleIds
         AdminRole[] adminRoles = new AdminRole[roleIds.length];// 创建一个角色管理员的引用数组,长度为用户选择的数量
         LocalDateTime now = LocalDateTime.now();// 获取当前的时间
         for (int i = 0; i < roleIds.length; i++) { // 遍历等长的数组向角色管理员关联表中插入数据(一个管理员对应多个角色)

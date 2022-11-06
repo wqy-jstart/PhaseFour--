@@ -22,7 +22,7 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     /**
-     * 实现Service接口中获取角色列表的功能
+     * 实现Service接口中获取角色列表的功能(实现过程中移除Id为1的角色----系统管理员)
      * @return 返回List集合
      */
     @Override
