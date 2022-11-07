@@ -12,4 +12,11 @@ public interface AdminRoleMapper {
      * @return 受影响的行数
      */
     int insertBatch(AdminRole[] adminRoleList);
+
+    /**
+     * 根据管理员id删除关联表中的数据
+     * @param id 管理员id
+     * @return 返回受影响的行数
+     */
+    int deleteByAdminId(Long id);
 }

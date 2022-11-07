@@ -28,4 +28,11 @@ public class AdminRoleMapperTests {
         int rows = mapper.insertBatch(adminRoles);
         log.debug("批量插入成功,影响数据条数为:{}",rows);
     }
+
+    @Test
+    void deleteByAdminId(){
+        Long adminId=100L;
+        int rows = mapper.deleteByAdminId(adminId);
+        log.debug("删除成功!受影响的行数为:{}",rows);
+    }
 }

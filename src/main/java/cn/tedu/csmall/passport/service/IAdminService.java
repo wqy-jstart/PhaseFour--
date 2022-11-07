@@ -6,6 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * 处理管理员数据的业务接口
+ *
+ * @Author java@Wqy
+ * @Version 0.0.1
+ */
 @Transactional
 public interface IAdminService {
 

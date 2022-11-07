@@ -130,9 +130,17 @@ public class AdminServiceImpl implements IAdminService {
 
         int rows = adminMapper.deleteById(id);
         if (rows != 1) {
-            String message = "服务器忙";
+            String message = "删除管理员失败，服务器忙，请稍后再尝试！";
             log.debug(message);
             throw new ServiceException(ServiceCode.ERR_DELETE, message);
+        }
+
+        // 删除管理员与角色的关联数据(★因为添加了事务注解,若此处发生异常,则会发生事务回滚)
+        rows = adminRoleMapper.deleteByAdminId(id);
+        if (rows <1){
+            String message = "删除管理员失败，服务器忙，请稍后再尝试！";
+            log.debug(message);
+            throw new ServiceException(ServiceCode.ERR_DELETE,message);
         }
     }
 

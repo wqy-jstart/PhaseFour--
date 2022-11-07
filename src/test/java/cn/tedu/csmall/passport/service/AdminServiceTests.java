@@ -41,7 +41,7 @@ public class AdminServiceTests {
 
     @Test
     void delete(){
-        Long id = 14L;
+        Long id = 30L;
         adminService.delete(id);
         log.debug("删除成功!");
     }
