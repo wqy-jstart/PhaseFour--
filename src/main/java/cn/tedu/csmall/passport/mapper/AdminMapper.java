@@ -92,4 +92,5 @@ public interface AdminMapper {
      * @return 返回登录的VO类信息
      */
     AdminLoginInfoVO getLoginInfoByUsername(String username);
+
 }
