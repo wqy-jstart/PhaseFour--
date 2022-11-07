@@ -36,7 +36,7 @@
                  id
     </select>
 
-    <!--封装字段列表-->
+    <!--封装查询管理员列表的字段-->
     <sql id="ListQueryFields">
         <if test="true">
             id,username, nickname, avatar, phone, email, description,
@@ -128,5 +128,28 @@
         <result column="last_login_ip" property="lastLoginIp"/>
         <result column="login_count" property="loginCount"/>
         <result column="gmt_last_login" property="gmtLastLogin"/>
+    </resultMap>
+
+    <!--AdminLoginInfoVO selectByUsername(String username);-->
+    <select id="getLoginInfoByUsername" resultMap="LoginResultRM">
+        SELECT
+        <include refid="LoginQueryFields"/>
+        FROM ams_admin
+        WHERE username=#{username}
+    </select>
+
+    <!--封装查询登录的字段-->
+    <sql id="LoginQueryFields">
+        <if test="true">
+            id,username,password,enable
+            enable, last_login_ip, login_count,gmt_last_login
+        </if>
+    </sql>
+
+    <resultMap id="LoginResultRM" type="cn.tedu.csmall.passport.pojo.vo.AdminLoginInfoVO">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="enable" property="enable"/>
     </resultMap>
 </mapper>

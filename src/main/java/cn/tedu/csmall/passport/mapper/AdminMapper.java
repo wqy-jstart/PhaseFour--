@@ -1,8 +1,8 @@
 package cn.tedu.csmall.passport.mapper;
 
-import cn.tedu.csmall.passport.pojo.dto.AdminAddNewDTO;
 import cn.tedu.csmall.passport.pojo.entity.Admin;
 import cn.tedu.csmall.passport.pojo.vo.AdminListItemVO;
+import cn.tedu.csmall.passport.pojo.vo.AdminLoginInfoVO;
 import cn.tedu.csmall.passport.pojo.vo.AdminStandardVO;
 import org.springframework.stereotype.Repository;
 
@@ -38,12 +38,6 @@ public interface AdminMapper {
      * @return 返回影响的条数
      */
     int countByEmail(String email);
-
-    /**
-     * 查询管理员列表的数据
-     * @return List集合
-     */
-    List<AdminListItemVO> list();
 
     /**
      * 批量插入数据
@@ -85,4 +79,17 @@ public interface AdminMapper {
      * @return 返回查询到的管理员信息
      */
     AdminStandardVO getStandardById(Long id);
+
+    /**
+     * 查询管理员列表的数据
+     * @return List集合
+     */
+    List<AdminListItemVO> list();
+
+    /**
+     * 根据用户名查询登录的信息
+     * @param username 用户名
+     * @return 返回登录的VO类信息
+     */
+    AdminLoginInfoVO getLoginInfoByUsername(String username);
 }

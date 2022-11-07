@@ -1,6 +1,7 @@
 package cn.tedu.csmall.passport.service;
 
 import cn.tedu.csmall.passport.pojo.dto.AdminAddNewDTO;
+import cn.tedu.csmall.passport.pojo.dto.AdminLoginDTO;
 import cn.tedu.csmall.passport.pojo.vo.AdminListItemVO;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,13 @@ import java.util.List;
  */
 @Transactional
 public interface IAdminService {
+
+    /**
+     * 管理员登录
+     *
+     * @param adminLoginDTO 封装了管理员的用户名和密码
+     */
+    void login(AdminLoginDTO adminLoginDTO);
 
     /**
      * 添加管理员的方法

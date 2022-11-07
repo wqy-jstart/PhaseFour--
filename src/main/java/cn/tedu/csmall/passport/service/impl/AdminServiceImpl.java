@@ -4,6 +4,7 @@ import cn.tedu.csmall.passport.ex.ServiceException;
 import cn.tedu.csmall.passport.mapper.AdminMapper;
 import cn.tedu.csmall.passport.mapper.AdminRoleMapper;
 import cn.tedu.csmall.passport.pojo.dto.AdminAddNewDTO;
+import cn.tedu.csmall.passport.pojo.dto.AdminLoginDTO;
 import cn.tedu.csmall.passport.pojo.entity.Admin;
 import cn.tedu.csmall.passport.pojo.entity.AdminRole;
 import cn.tedu.csmall.passport.pojo.vo.AdminListItemVO;
@@ -13,6 +14,9 @@ import cn.tedu.csmall.passport.web.ServiceCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,14 +26,36 @@ import java.util.List;
 @Slf4j
 @Service
 public class AdminServiceImpl implements IAdminService {
+    // 注入管理员表的Mapper
     @Autowired
     private AdminMapper adminMapper;
+
     // 注入关联表的mapper,向该表中批量插入数据(一个管理员可能对应多个角色,故批量)
     @Autowired
     private AdminRoleMapper adminRoleMapper;
 
+    // 注入认证信息接口对象
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     public AdminServiceImpl() {
         log.info("创建业务对象：AdminServiceImpl");
+    }
+
+    /**
+     * 管理员登录的业务
+     *
+     * @param adminLoginDTO 封装了管理员的用户名和密码
+     */
+    @Override
+    public void login(AdminLoginDTO adminLoginDTO) {
+        log.debug("开始处理[管理员登录]的业务,参数:{}", adminLoginDTO);
+        //创建一个认证器,实例化UsernamePasswordAuthenticationToken()方法,传入需要认证的用户名和密码
+        Authentication authentication
+                = new UsernamePasswordAuthenticationToken(
+                    adminLoginDTO.getUsername(), adminLoginDTO.getPassword());
+        // 调用authenticationManager认证信息接口中的authenticate()方法传入认证器进行认证
+        authenticationManager.authenticate(authentication);
     }
 
     /**
@@ -39,12 +65,12 @@ public class AdminServiceImpl implements IAdminService {
      */
     @Override
     public void adNew(AdminAddNewDTO adminAddNewDTO) {
-        log.debug("开始处理添加[添加管理员]的业务!,参数：{}",adminAddNewDTO);
+        log.debug("开始处理添加[添加管理员]的业务!,参数：{}", adminAddNewDTO);
 
         log.debug("即将检查用户名是否被占用……");
         int selectByUsername = adminMapper.countByUsername(adminAddNewDTO.getUsername());
         if (selectByUsername > 0) {
-            String message = "添加管理员失败,用户名["+adminAddNewDTO.getUsername()+"]已经被占用!";
+            String message = "添加管理员失败,用户名[" + adminAddNewDTO.getUsername() + "]已经被占用!";
             log.debug(message);
             throw new ServiceException(ServiceCode.ERROR_CONFLICT, message);
         }
@@ -52,7 +78,7 @@ public class AdminServiceImpl implements IAdminService {
         log.debug("即将检查手机号码是否被占用……");
         int selectByPhone = adminMapper.countByPhone(adminAddNewDTO.getPhone());
         if (selectByPhone > 0) {
-            String message = "添加管理员失败,手机号["+adminAddNewDTO.getPhone()+"]已经被占用!";
+            String message = "添加管理员失败,手机号[" + adminAddNewDTO.getPhone() + "]已经被占用!";
             log.debug(message);
             throw new ServiceException(ServiceCode.ERROR_CONFLICT, message);
         }
@@ -60,7 +86,7 @@ public class AdminServiceImpl implements IAdminService {
         log.debug("即将检查电子邮箱是否被占用……");
         int selectByEmail = adminMapper.countByEmail(adminAddNewDTO.getEmail());
         if (selectByEmail > 0) {
-            String message = "添加管理员失败,电子邮箱["+adminAddNewDTO.getEmail()+"]已经被占用!";
+            String message = "添加管理员失败,电子邮箱[" + adminAddNewDTO.getEmail() + "]已经被占用!";
             log.debug(message);
             throw new ServiceException(ServiceCode.ERROR_CONFLICT, message);
         }
@@ -97,10 +123,10 @@ public class AdminServiceImpl implements IAdminService {
             adminRoles[i] = adminRole;// 将封装好的角色管理员对象放到AdminRole[]数组中
         }
         rows = adminRoleMapper.insertBatch(adminRoles);// 调用批量插入关联表的方法,传入要插入的管理员角色对象
-        if (rows != roleIds.length){ // 判断如果影响的行数与插入的结果不一致时,抛出异常
+        if (rows != roleIds.length) { // 判断如果影响的行数与插入的结果不一致时,抛出异常
             String message = "添加管理员失败，服务器忙，请稍后再次尝试！";
             log.debug(message);
-            throw new ServiceException(ServiceCode.ERR_INSERT,message);
+            throw new ServiceException(ServiceCode.ERR_INSERT, message);
         }
     }
 
@@ -137,10 +163,10 @@ public class AdminServiceImpl implements IAdminService {
 
         // 删除管理员与角色的关联数据(★因为添加了事务注解,若此处发生异常,则会发生事务回滚)
         rows = adminRoleMapper.deleteByAdminId(id);
-        if (rows <1){
+        if (rows < 1) { // 若影响的行数小于1,抛出删除异常
             String message = "删除管理员失败，服务器忙，请稍后再尝试！";
             log.debug(message);
-            throw new ServiceException(ServiceCode.ERR_DELETE,message);
+            throw new ServiceException(ServiceCode.ERR_DELETE, message);
         }
     }
 

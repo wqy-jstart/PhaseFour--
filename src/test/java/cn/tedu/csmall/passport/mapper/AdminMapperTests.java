@@ -1,6 +1,7 @@
 package cn.tedu.csmall.passport.mapper;
 
 import cn.tedu.csmall.passport.pojo.entity.Admin;
+import cn.tedu.csmall.passport.pojo.vo.AdminLoginInfoVO;
 import cn.tedu.csmall.passport.pojo.vo.AdminStandardVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -10,10 +11,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 管理员Mapper的测试类
+ *
+ * @java.@Wqy
+ * @Version 0.0.1
+ */
 @Slf4j
 @SpringBootTest
 public class AdminMapperTests {
 
+    // 自动注入Admin的DAO层mapper接口类
     @Autowired
     AdminMapper adminMapper;
 
@@ -37,6 +45,9 @@ public class AdminMapperTests {
         log.debug("插入成功,影响的条数为:{}",rows);
     }
 
+    /**
+     * 测试根据用户名查询数量
+     */
     @Test
     void countByUsername(){
         String username = "武清源";
@@ -44,6 +55,9 @@ public class AdminMapperTests {
         log.debug("查询成功,查到的数据条数为:{}",rows);
     }
 
+    /**
+     * 测试根据手机号查询数量
+     */
     @Test
     void countByPhone(){
         String phone = "15551898017";
@@ -51,6 +65,9 @@ public class AdminMapperTests {
         log.debug("查询成功,查到的数据条数为:{}",rows);
     }
 
+    /**
+     * 测试根据电子邮箱查询数量
+     */
     @Test
     void countByEmail(){
         String email = "2168149199@qq.com";
@@ -58,6 +75,9 @@ public class AdminMapperTests {
         log.debug("查询成功,查到的数据条数为:{}",rows);
     }
 
+    /**
+     * 测试批量插入管理员
+     */
     @Test
     void insertBatch(){
         List<Admin> list = new ArrayList<>();
@@ -79,12 +99,19 @@ public class AdminMapperTests {
         log.debug("批量插入完成,受影响的行数,{}",rows);
     }
 
+    /**
+     * 测试根据id删除管理员
+     */
     @Test
     void deleteById(){
         Long id = 6L;
         int rows = adminMapper.deleteById(id);
         log.debug("删除完成,受影响的行数为,{}",rows);
     }
+
+    /**
+     * 测试根据id批量删除管理员
+     */
     @Test
     void deleteByIds(){
         Long[] ids = {7L,8L,9L};
@@ -92,6 +119,9 @@ public class AdminMapperTests {
         log.debug("删除完成,受影响的行数为,{}",rows);
     }
 
+    /**
+     * 测试根据id修改管理员信息
+     */
     @Test
     void updateById(){
         Long id = 10L;
@@ -111,16 +141,32 @@ public class AdminMapperTests {
         log.debug("修改完成,受影响的行数为,{}",rows);
     }
 
+    /**
+     * 测试直接查询管理员数量
+     */
     @Test
     void count(){
         int rows = adminMapper.count();
         log.debug("查询成功,数据数量为:{}",rows);
     }
 
+    /**
+     * 测试根据id查询单个管理员的信息
+     */
     @Test
     void getStandardById(){
         Long id = 5L;
         AdminStandardVO adminStandardVO = adminMapper.getStandardById(id);
         log.debug("查询到的管理员信息为:{}",adminStandardVO.toString());
+    }
+
+    /**
+     * 测试根据用户名查询登录所需要的管理员信息
+     */
+    @Test
+    void getLoginInfoByUsername(){
+        String username = "fanchuanqi";
+        AdminLoginInfoVO adminLoginInfoVO = adminMapper.getLoginInfoByUsername(username);
+        log.debug("查询成功,参数{}",adminLoginInfoVO.toString());
     }
 }
