@@ -63,7 +63,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/**/*.css",
                 "/swagger-resources",
                 "/v2/api-docs",
-                "/admins/login"
+                "/admins/login",
         };
 
         // 将"防止伪造跨域攻击的机制"禁用(如果不添加该配置,Post请求会403---浏览器的安全措施)
