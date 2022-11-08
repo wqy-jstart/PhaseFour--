@@ -17,12 +17,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * 管理员模块的实现类
+ *
+ * @Author java.@Wqy
+ * @Version 0.0.1
+ */
 @Slf4j
 @Service
 public class AdminServiceImpl implements IAdminService {
@@ -55,7 +62,10 @@ public class AdminServiceImpl implements IAdminService {
                 = new UsernamePasswordAuthenticationToken(
                     adminLoginDTO.getUsername(), adminLoginDTO.getPassword());
         // 调用authenticationManager认证信息接口中的authenticate()方法传入认证器进行认证
-        authenticationManager.authenticate(authentication);
+        Authentication authenticate
+                = authenticationManager.authenticate(authentication);
+        // 利用SecurityContextHolder获取上下文,并设置认证器中要认证的信息,保存到服务端的Session中
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
     }
 
     /**

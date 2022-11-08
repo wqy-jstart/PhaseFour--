@@ -39,7 +39,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
      * @return
      * @throws Exception
      */
-    @Bean// 该注解便于Spring框架进行管理
+    @Bean// 该注解便于Spring框架进行管理,自动调用,放入容器,利于自动装配
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
@@ -72,7 +72,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         // 添加这些方法,可以手动匹配进行随机认证-----链式写法
         // 提示: 关于请求路径的配置,如果同一路径对应多项配置规则,以第1次配置为准
         http.authorizeRequests() // 管理请求授权
-                .mvcMatchers(urls) // 匹配的路径
+                .mvcMatchers(urls) // 可匹配的路径
                 .permitAll() // 直接许可,即可不需要通过认证即可访问
                 .anyRequest() // 除了以上配置过的以外的其他所有请求
                 .authenticated(); // 要求是"已经通过认证的"

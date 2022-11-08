@@ -104,8 +104,8 @@ public class GlobalExceptionHandler {
     })
     public JsonResult<Void> handleAuthenticationException(AuthenticationException e) {// 参数列表中应当是注解中异常的共同"父类"
         log.debug("捕获到:AuthenticationException");
-        log.debug("异常类型:{}", e.getClass().getName());
-        log.debug("异常消息:{}", e.getMessage());
+        log.debug("异常类型:{}", e.getClass().getName());// 输出对应类型异常的完全限定名
+        log.debug("异常消息:{}", e.getMessage());// 用户名或密码错误
         String message = "登录失败,用户名或密码错误";
         return JsonResult.fail(ServiceCode.ERR_UNAUTHORIZED, message);
     }
