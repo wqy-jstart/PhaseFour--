@@ -22,7 +22,7 @@ public class JsonResult<T> implements Serializable {
     //描述文本
     @ApiModelProperty("操作失败时的描述文本")
     private String message;
-    //操作成功时响应的数据
+    //操作成功时响应的数据,可以是任意类型
     @ApiModelProperty("操作成功时的返回数据")
     private T data;
 

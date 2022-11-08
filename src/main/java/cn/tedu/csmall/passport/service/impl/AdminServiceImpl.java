@@ -11,18 +11,19 @@ import cn.tedu.csmall.passport.pojo.vo.AdminListItemVO;
 import cn.tedu.csmall.passport.pojo.vo.AdminStandardVO;
 import cn.tedu.csmall.passport.service.IAdminService;
 import cn.tedu.csmall.passport.web.ServiceCode;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * 管理员模块的实现类
@@ -55,17 +56,44 @@ public class AdminServiceImpl implements IAdminService {
      * @param adminLoginDTO 封装了管理员的用户名和密码
      */
     @Override
-    public void login(AdminLoginDTO adminLoginDTO) {
+    public String login(AdminLoginDTO adminLoginDTO) {
         log.debug("开始处理[管理员登录]的业务,参数:{}", adminLoginDTO);
-        //创建一个认证器,实例化UsernamePasswordAuthenticationToken()方法,传入需要认证的用户名和密码
+
+        // 1.执行认证
+        //创建一个认证器,实例化UsernamePasswordAuthenticationToken类,传入需要认证的用户名和密码
         Authentication authentication
                 = new UsernamePasswordAuthenticationToken(
-                    adminLoginDTO.getUsername(), adminLoginDTO.getPassword());
-        // 调用authenticationManager认证信息接口中的authenticate()方法传入认证器进行认证
+                adminLoginDTO.getUsername(), adminLoginDTO.getPassword());
+        // 调用认证信息接口中的authenticate()方法传入认证器进行认证
         Authentication authenticate
                 = authenticationManager.authenticate(authentication);
-        // 利用SecurityContextHolder获取上下文,并设置认证器中要认证的信息,保存到服务端的Session中
-        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        // 利用SecurityContextHolder获取上下文,并设置认证器中要认证的信息,保存到服务端的Session中(不推荐)
+//        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        log.debug("认证通过,认证管理器返回:{}", authenticate);
+
+        // 2.从认证结果中获取所需的数据,将用于生成JWT
+        Object principal = authenticate.getPrincipal();// 获取认证的当事人对象Principal
+        log.debug("认证结果中的当事人类型:{}", principal.getClass().getName());// org.springframework.security.core.userdetails.User
+        User user = (User) principal; // 强转成User对象
+        String username = user.getUsername(); // 获取认证结果的用户名
+
+        // 生成JWT数据时,需要填充装到JWT中的数据
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("username", username);
+        String secretKey = "a9F8ujGDhjgFvfEd3SA90ukDS";// 类似于盐值
+        Date date = new Date(System.currentTimeMillis() + 5 * 24 * 60 * 60 * 1000L);
+        String jwt = Jwts.builder() // 构建者模式
+                // Header
+                .setHeaderParam("alg", "HS256") // 指定算法
+                .setHeaderParam("trp", "JWT") // 指定类型
+                // Payload 载荷
+                .setClaims(claims)
+                // Signature 签名
+                .setExpiration(date)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+        log.debug("生成的JWT：{}", jwt);
+        return jwt;// 返回认证后的JWT
     }
 
     /**

@@ -1,6 +1,8 @@
 package cn.tedu.csmall.passport.config;
 
+import cn.tedu.csmall.passport.filter.JwtAuthorizationFilter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * 创建Spring Security的配置类
@@ -19,6 +22,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Slf4j
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+    // 将自己写的JWT过滤器装配进来
+    @Autowired
+    private JwtAuthorizationFilter jwtAuthorizationFilter;
 
     public SecurityConfiguration(){
         log.debug("创建配置类对象:SecurityConfiguration");
@@ -66,6 +73,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/admins/login",
         };
 
+        // ???
+        http.cors();
+
         // 将"防止伪造跨域攻击的机制"禁用(如果不添加该配置,Post请求会403---浏览器的安全措施)
         http.csrf().disable();
 
@@ -76,6 +86,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .permitAll() // 直接许可,即可不需要通过认证即可访问
                 .anyRequest() // 除了以上配置过的以外的其他所有请求
                 .authenticated(); // 要求是"已经通过认证的"
+
+        // 将JWT过滤器添加到Spring Security框架的过滤器链中
+        http.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
 
         // 启用登录 :
         // -- 如果启用了表单,会自动重定向到登录表单

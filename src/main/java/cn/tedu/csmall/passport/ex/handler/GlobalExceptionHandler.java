@@ -88,10 +88,6 @@ public class GlobalExceptionHandler {
         return JsonResult.fail(ServiceCode.ERR_BAD_REQUEST, stringJoiner.toString());
     }
 
-    // 用户名不存在: InternalAuthenticationServiceException
-    // 密码错误: BadCredentialsException
-    // 用户失效: DisabledException
-
     /**
      * Spring Security框架----用户名或密码错误
      *

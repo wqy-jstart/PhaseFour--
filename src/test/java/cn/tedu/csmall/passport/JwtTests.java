@@ -14,7 +14,7 @@ import java.util.Map;
 public class JwtTests {
 
     // 设置签名(一个签名对应一个JWT)
-    String secretKey = "gjrepheHFGEGeergerr";
+    String secretKey = "a9F8ujGDhjgFvfEd3SA90ukDS";
 
     // 生成JWT
     @Test
@@ -43,7 +43,7 @@ public class JwtTests {
     // 解析JWT
     @Test
     public void parse() {
-        String jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OTUyNywiZXhwIjoxNjY3ODc5MDU5LCJ1c2VybmFtZSI6ImZhbmNodWFucWkifQ.ZcMcg9XtUF0Q1-gOOjP3mAr4hMh2fFYE8r6cB20t50Q";
+        String jwt = "eyJhbGciOiJIUzI1NiIsInRycCI6IkpXVCJ9.eyJleHAiOjE2NjgzMjE1NjIsInVzZXJuYW1lIjoicm9vdCJ9._bSGd2e7fZ8XtWYzVJrxqSJ0dHaNqF4J0tPmSs6EXZk";
         Claims claims = Jwts.parser()
                 .setSigningKey(secretKey) // 设置需要解析的JWT签名
                 .parseClaimsJws(jwt) // 拿到需要解析的JWT代码

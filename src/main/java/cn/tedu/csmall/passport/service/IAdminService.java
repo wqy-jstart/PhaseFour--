@@ -20,12 +20,13 @@ public interface IAdminService {
      * 管理员登录
      *
      * @param adminLoginDTO 封装了管理员的用户名和密码
+     * @return 登录成功生成匹配的JWT
      */
-    void login(AdminLoginDTO adminLoginDTO);
+    String login(AdminLoginDTO adminLoginDTO);
 
     /**
      * 添加管理员的方法
-     * @param adminAddNewDTO
+     * @param adminAddNewDTO 添加管理员的DTO类
      */
     void adNew(AdminAddNewDTO adminAddNewDTO);
 
