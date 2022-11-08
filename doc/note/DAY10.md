@@ -1,11 +1,11 @@
-# 删除管理员--Mapper层
+# 60. 删除管理员--Mapper层
 
 删除管理员，需要Mapper实现：
 
 - 根据id删除管理员数据
 - 根据id查询管理员数据（用于检查尝试删除的数据是否存在）
 
-# 删除管理员--Service层
+# 61. 删除管理员--Service层
 
 在`IAdminService`中添加抽象方法：
 
@@ -33,11 +33,11 @@ public void delete(Long id) {
 
 ```
 
-# 启用或禁用管理员--Mapper层
+# 62. 启用或禁用管理员--Mapper层
 
 直接使用现有的通用`update()`即可。
 
-# 启用或禁用管理员--Service层
+# 63. 启用或禁用管理员--Service层
 
 在`IAdminService`中添加抽象方法：
 
@@ -83,7 +83,7 @@ private void updateEnableById(Long id, Integer enable) {
 
 ```
 
-# 启用或禁用管理员--Controller层
+# 64. 启用或禁用管理员--Controller层
 
 在`AdminController`中也是添加2个处理请求的方法，配置的请求路径可以是：
 
@@ -92,7 +92,7 @@ private void updateEnableById(Long id, Integer enable) {
 
 编写代码时，可以从原有的`delete()`方法复制再调整。
 
-# 添加管理员时确定此管理员的角色
+# 65. 添加管理员时确定此管理员的角色
 
 当某个软件系统设计了“权限”的概念时，添加用户时必须确定此用户的权限，在基于RBAC的设计中，添加用户时必须确定此用户的角色，进而可以关联到某些权限，否则，如果没有确定此用户的角色，会导致新增的用户没有权限，可能无法进行相关操作！
 
@@ -108,7 +108,7 @@ private void updateEnableById(Long id, Integer enable) {
 - 新增`RoleMapper`接口，需要实现“查询角色列表”功能，并且，还需要开发至控制器层
 - 新增`AdminRoleMapper`接口，需要实现“批量插入”功能，“根据管理员id删除数据”功能
 
-# 显示角色列表--Mapper层
+# 66. 显示角色列表--Mapper层
 
 在根包下创建`pojo.vo.RoleListItemVO`类：
 
@@ -137,7 +137,7 @@ public interface RoleMapper {
 
 ```
 
-# 显示角色列表--Service层
+# 67. 显示角色列表--Service层
 
 在根包下创建`service.IRoleService`接口，添加抽象方法：
 
@@ -157,7 +157,7 @@ List<RoleListItemVO> list();
 
 ```
 
-# 显示角色列表--Controller层
+# 68. 显示角色列表--Controller层
 
 在根包下创建`controller.RoleController`类，在类上添加`@RestController`和`@RequestMapping("/roles")`注解，在类中自动装配`IRoleService`对象，然后添加处理请求的方法：
 

@@ -1,8 +1,8 @@
-# 关于Spring Security框架
+# 69. 关于Spring Security框架
 
 Spring Security框架主要解决了**认证**与**授权**相关的问题。
 
-# 添加Spring Boot Security依赖
+# 70. 添加Spring Boot Security依赖
 
 在`csmall-passport`项目中添加依赖项：
 
@@ -30,7 +30,7 @@ org.springframework.security.web.firewall.RequestRejectedException: The request 
 
 此错误是浏览器的问题导致的，更换浏览器即可。
 
-# 关于BCryptPasswordEncoder
+# 71. 关于BCryptPasswordEncoder
 
 BCrypt算法是用于对密码进行加密处理的，在`spring-boot-starter-security`中包含了`BCryptPasswordEncoder`，可以实现编码、验证：
 
@@ -75,7 +75,7 @@ BCrypt算法默认使用了随机盐值，所以，即使使用相同的原文�
 
 BCrypt算法被刻意设计为慢速的，所以，可以非常有限的避免穷举式的暴力破解！
 
-# 关于Spring Security的配置类
+# 72. 关于Spring Security的配置类
 
 在Spring Boot项目中，在根包下创建`config.SecurityConfiguration`类，作为Spring Security的配置类，需要继承自`WebSecurityConfigurerAdapter`类，并重写其中的方法进行配置：
 
@@ -135,7 +135,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 }
 ```
 
-# 关于伪造的跨域攻击
+# 73. 关于伪造的跨域攻击
 
 伪造的跨域攻击（CSRF）主要是基于服务器端对浏览器的信任，在多选项卡的浏览器中，如果在X选项卡中登录，在Y选项卡中的访问也会被视为“已登录”。
 
@@ -147,7 +147,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 以上代码中的`value`值就是一个UUID值，是前次GET请求时由服务器端响应的，服务器端会要求客户端携带此UUID来访问，否则，就会将请求视为伪造的跨域攻击行为！
 
-# 关于登录账号
+# 74. 关于登录账号
 
 默认情况下，Spring Security框架提供了默认的用户名`user`和启动时随机生成UUID密码，如果需要自定义登录账号，可以自定义类，实现`UserDetailsService`接口，重写接口中的如下方法：
 
@@ -245,7 +245,7 @@ public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException
             	// 后续代码没有调整……
 ```
 
-# 使用数据库中的管理员账号登录
+# 75. 使用数据库中的管理员账号登录
 
 只需要保证在`UserDetailsServiceImpl`类中，返回的是数据库中对应的管理员信息即可！
 
@@ -334,7 +334,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 }
 ```
 
-# 使用前后端分离的登录模式
+# 76. 使用前后端分离的登录模式
 
 目前的登录是由Spring Security提供了登录表单，然后由自定义的`UserDetailsServiceImpl`获取对应的用户信息，并由Spring Security完后后续的认证过程，以此来实现的，这**不是**前后端分离的开发模式，因为依赖于Spring Security提供的登录表单，例如`csmall-web-client`或其它客户端根本没有办法像服务器端发送登录请求！
 
@@ -342,10 +342,104 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 - 使用控制器接收来自客户端的登录请求
   - 创建`AdminLoginDTO`封装客户端提交的用户名、密码
+  - 所设计的登录请求的URL必须添加到“白名单”
 - 使用Service处理登录认证
   - 调用`AuthenticationManager`的`authenticate()`方法处理认证
     - 可以通过重写配置类中的`authenticationManagerBean()`方法，并添加`@Bean`注解来得到
 
+**【AdminLoginDTO】**
+
+```java
+package cn.tedu.csmall.passport.pojo.dto;
+
+@Data
+public class AdminLoginDTO implements Serializable {
+
+    private String username;
+    private String password;
+
+}
+```
+
+**【SecurityConfiguration】**
+
+```java
+@Bean
+@Override
+public AuthenticationManager authenticationManagerBean() throws Exception {
+    return super.authenticationManagerBean();
+}
+```
+
+**【IAdminService】**
+
+```java
+void login(AdminLoginDTO adminLoginDTO);
+```
+
+**【AdminServiceImpl】**
+
+```java
+@Autowired
+private AuthenticationManager authenticationManager;
+
+@Override
+public void login(AdminLoginDTO adminLoginDTO) {
+    log.debug("开始处理【管理员登录】的业务，参数：{}", adminLoginDTO);
+    Authentication authentication
+            = new UsernamePasswordAuthenticationToken(
+                    adminLoginDTO.getUsername(), adminLoginDTO.getPassword());
+    authenticationManager.authenticate(authentication);
+}
+```
+
+**【AdminController】**
+
+```java
+// http://localhost:9081/admins/login
+@ApiOperation("管理员登录")
+@ApiOperationSupport(order = 50)
+@PostMapping("/login")
+public JsonResult<Void> login(AdminLoginDTO adminLoginDTO) {
+    log.debug("开始处理【管理员登录】的请求，参数：{}", adminLoginDTO);
+    adminService.login(adminLoginDTO);
+    return JsonResult.ok();
+}
+```
+
+**注意：强烈建议禁用Spring Security的登录表单！**
+
+完成后，重启项目，可以通过API文档向 http://localhost:9081/admins/login 提交请求，如果用户名或密码错误，都会导致403错误，如果用户名和密码均正确，则会响应`state`为`20000`的JSON结果。
+
+最后，在全局异常处理器中，补充对相关异常的处理：
+
+```java
+@ExceptionHandler({
+        InternalAuthenticationServiceException.class, // AuthenticationServiceException >>> AuthenticationException
+        BadCredentialsException.class // AuthenticationException
+})
+public JsonResult<Void> handleAuthenticationException(AuthenticationException e) {
+    log.debug("捕获到AuthenticationException");
+    log.debug("异常类型：{}", e.getClass().getName());
+    log.debug("异常消息：{}", e.getMessage());
+    String message = "登录失败，用户名或密码错！";
+    return JsonResult.fail(ServiceCode.ERR_UNAUTHORIZED, message);
+}
+
+@ExceptionHandler
+public JsonResult<Void> handleDisabledException(DisabledException e) {
+    log.debug("捕获到DisabledException");
+    String message = "登录失败，此账号已经被禁用！";
+    return JsonResult.fail(ServiceCode.ERR_UNAUTHORIZED_DISABLED, message);
+}
+
+@ExceptionHandler
+public String handleThrowable(Throwable e) {
+    String message = "你有异常没有处理，请根据服务器端控制台的信息，补充对此类异常的处理！！！";
+    e.printStackTrace();
+    return message;
+}
+```
 
 
 
@@ -373,8 +467,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 
 
-
-# 简历技术描述参考
+# 77. 简历技术描述参考
 
 - 【了解/掌握/熟练掌握】开发工具的使用，包括：Eclipse、IntelliJ IDEA、Git、Maven；
 - 【了解/掌握/熟练掌握】Java语法，【理解/深刻理解】面向对象编程思想，【了解/掌握/熟练掌握】Java SE API，包括：String、日期、IO、反射、线程、网络编程、集合、异常等；

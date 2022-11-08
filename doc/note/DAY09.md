@@ -1,10 +1,10 @@
-# 关于csmall-passport项目
+# 51. 关于csmall-passport项目
 
 此项目主要实现管理员管理，例如：添加管理员、显示管理员列表、删除管理员、启用管理员、禁用管理员等。
 
 还将实现管理员登录功能，此登录将可以影响到其它项目，例如`csmall-product`项目，只要在当前`csmall-passport`项目中登录，在`csmall-product`项目中也能识别管理员的身份，并检查权限等。
 
-# 关于mall_ams数据库
+# 52. 关于mall_ams数据库
 
 此数据库的核心数据表包括：
 
@@ -16,7 +16,7 @@
 
 以上表的设计是基于**RBAC（Role-Based Access Control）模型**的！
 
-# 关于创建新项目
+# 53. 关于创建新项目
 
 - 创建新的项目`jsd2207-csmall-passport`
 - 调整`pom.xml`，主要：
@@ -28,7 +28,7 @@
   - 可以将原有所有配置类全部复制到当前项目，需要修改：Mybatis配置中扫描的包名、Knife4j配置中控制器类的包名，及Knife4j配置中其它用于显示的字样
 - 创建数据库，创建数据表
 
-# 添加管理员--Mapper层
+# 54. 添加管理员--Mapper层
 
 当添加管理员时，本质上是执行“插入管理员数据”的操作，需要执行的SQL语句大致是：
 
@@ -86,7 +86,7 @@ public interface AdminMapper {
 
 ```
 
-# 添加管理员--Service层
+# 55. 添加管理员--Service层
 
 从前序项目（`csmall-product`）中复制`ServiceCode`到当前项目对应的包中。
 
@@ -150,7 +150,7 @@ public class AdminServiceImpl implements IAdminService {
 
 ```
 
-# 添加管理员--Controller层
+# 56. 添加管理员--Controller层
 
 从前序项目（`csmall-product`）中复制`JsonResult`到当前项目对应的包中。
 
@@ -179,7 +179,7 @@ public class AdminController {
 
 当调试无误后，应该在`AdminController`添加API文档相关的注解。
 
-# 显示管理员列表--Mapper层
+# 57. 显示管理员列表--Mapper层
 
 在根包下创建`pojo.vo.AdminListItemVO`类，此类中应该包含显示列表时所需的属性：
 
@@ -226,7 +226,7 @@ List<AdminListItemVO> list();
 
 ```
 
-# 显示管理员列表--Service层
+# 58. 显示管理员列表--Service层
 
 在`IAdminService`中添加抽象方法（可以与Mapper接口中相同）：
 
@@ -246,7 +246,7 @@ List<AdminListItemVO> list();
 
 ```
 
-# 显示管理员列表--Controller层
+# 59. 显示管理员列表--Controller层
 
 在`AdminController`中添加处理请求的方法：
 

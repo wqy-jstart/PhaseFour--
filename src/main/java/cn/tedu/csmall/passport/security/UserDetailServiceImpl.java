@@ -41,7 +41,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         }
 
         // Spring Security框架会内置一个User对象(UserDetails接口的实现)来处理登录的用户名和密码等一系列机制
-        UserDetails userDetails = User.builder() //盗用builder()方法来构建登录的信息
+        UserDetails userDetails = User.builder() //调用builder()方法来构建登录的信息
                 .username(admin.getUsername()) // 用户名
                 .password(admin.getPassword()) // 根据配置类返回的解码器来对应不同类型的密码,这里使用BCrypt编译器,就必须使用该算法加密后的结果
                 .disabled(admin.getEnable() == 0) // 是否禁用和启用enable
