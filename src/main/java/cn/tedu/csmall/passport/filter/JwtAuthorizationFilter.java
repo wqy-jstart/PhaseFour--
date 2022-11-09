@@ -72,7 +72,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         // 尝试解析JWT(在解析时应当手动捕获相应的异常,否则无法通过过滤器,业务也不会执行)
         log.debug("获取到的JWT被视为有效,准备解析JWT...");
-        response.setContentType("application/json; charset=utf-8");// 利用response设置响应类型(这里是UTF-8的json类型)
+        response.setContentType("application/json; charset=utf-8");// 利用response设置响应类型(告诉浏览器响应的字符集是UTF-8的json类型)
         Claims claims;
         try {
             claims = Jwts.parser() // 调用解析器,传入签名和jwt
