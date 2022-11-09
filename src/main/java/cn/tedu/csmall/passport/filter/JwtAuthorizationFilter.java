@@ -1,5 +1,6 @@
 package cn.tedu.csmall.passport.filter;
 
+import cn.tedu.csmall.passport.security.LoginPrincipal;
 import cn.tedu.csmall.passport.web.JsonResult;
 import cn.tedu.csmall.passport.web.ServiceCode;
 import com.alibaba.fastjson.JSON;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ★JWT过滤器---该过滤器仅对客户端再次登录携带的JWT做检查,后续不管
+ * ★JWT过滤器---该过滤器仅对客户端登录后发出请求时携带的JWT做检查,后续不管
  *
  * <p>JWT过滤器</p>
  *
@@ -113,18 +114,23 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 获取解析JWT后获取的用户名
+        // 获取解析JWT后获取的用户名和id
         String username = claims.get("username",String.class);
+        Long id = claims.get("id",Long.class);
+        log.debug("从JWT中取出用户名:{}",username);
+        log.debug("从JWT中取出id:{}",id);
 
         // 添加权限信息
         List<GrantedAuthority> authorities = new ArrayList<>();
         GrantedAuthority authority = new SimpleGrantedAuthority("这是一个假权限");
         authorities.add(authority);
 
+        // 创建一个登录时的当事人对象,传入解析后的用户名和id
+        LoginPrincipal loginPrincipal = new LoginPrincipal(username,id);
         // 创建一个UsernamePasswordAuthenticationToken,传入用户名和权限信息,返回Authentication认证器对象
         Authentication authentication
                 = new UsernamePasswordAuthenticationToken(
-                        username,null,authorities);
+                        loginPrincipal,null,authorities);
 
         // 将Authentication对象的引用存入到SecurityContext上下文中(Spring规定)
         log.debug("向SecurityContext中存入认证信息:{}",authentication);

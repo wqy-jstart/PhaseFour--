@@ -3,6 +3,7 @@ package cn.tedu.csmall.passport.controller;
 import cn.tedu.csmall.passport.pojo.dto.AdminAddNewDTO;
 import cn.tedu.csmall.passport.pojo.dto.AdminLoginDTO;
 import cn.tedu.csmall.passport.pojo.vo.AdminListItemVO;
+import cn.tedu.csmall.passport.security.LoginPrincipal;
 import cn.tedu.csmall.passport.service.IAdminService;
 import cn.tedu.csmall.passport.web.JsonResult;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -12,8 +13,10 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -86,8 +89,10 @@ public class AdminController {
     @ApiOperation("管理员列表")
     @ApiOperationSupport(order = 210)//排序
     @GetMapping("")
-    public JsonResult<List<AdminListItemVO>> list(){
+    public JsonResult<List<AdminListItemVO>> list(
+            @ApiIgnore @AuthenticationPrincipal LoginPrincipal loginPrincipal){// 添加@ApiIgnore注解告诉Api文档忽略当前的输入框
         log.debug("开始处理[查询管理员列表]的请求,无参数");
+        log.debug("当前登录的当事人:{}",loginPrincipal);
         List<AdminListItemVO> list = adminService.list();
         return JsonResult.ok(list);
     }

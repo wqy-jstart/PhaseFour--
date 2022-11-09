@@ -9,6 +9,7 @@ import cn.tedu.csmall.passport.pojo.entity.Admin;
 import cn.tedu.csmall.passport.pojo.entity.AdminRole;
 import cn.tedu.csmall.passport.pojo.vo.AdminListItemVO;
 import cn.tedu.csmall.passport.pojo.vo.AdminStandardVO;
+import cn.tedu.csmall.passport.security.AdminDetails;
 import cn.tedu.csmall.passport.service.IAdminService;
 import cn.tedu.csmall.passport.web.ServiceCode;
 import io.jsonwebtoken.Jwts;
@@ -20,7 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -71,7 +71,8 @@ public class AdminServiceImpl implements IAdminService {
         //创建一个认证器,实例化UsernamePasswordAuthenticationToken类,传入需要认证的用户名和密码
         Authentication authentication
                 = new UsernamePasswordAuthenticationToken(
-                adminLoginDTO.getUsername(), adminLoginDTO.getPassword());
+                adminLoginDTO.getUsername(), adminLoginDTO.getPassword()
+        );
         // 调用认证信息接口中的authenticate()方法传入认证器执行认证,返回认证结果
         Authentication authenticateResult
                 = authenticationManager.authenticate(authentication);
@@ -81,14 +82,18 @@ public class AdminServiceImpl implements IAdminService {
 
         // 2.认证成功后,从认证结果中获取所需的数据,将用于生成JWT
         Object principal = authenticateResult.getPrincipal();// 获取认证的当事人对象Principal
-        log.debug("认证结果中的当事人类型:{}", principal.getClass().getName());// org.springframework.security.core.userdetails.User
-        User user = (User) principal; // 强转成User对象,这里的User就是UserDetails中的User
-        String username = user.getUsername(); // 获取认证结果的用户名
+        log.debug("认证结果中的当事人类型:{}", principal.getClass().getName());// cn.tedu.csmall.passport.security.AdminDetails
+        AdminDetails adminDetails = (AdminDetails) principal; // 强转成User对象,这里的User就是UserDetails中的User
+        String username = adminDetails.getUsername(); // 获取认证结果的用户名
+        Long id = adminDetails.getId();
 
         // 生成JWT数据时,需要将数据填充到JWT中
         Map<String, Object> claims = new HashMap<>();
-        // claims.put("id=" + id)
         claims.put("username", username);
+        claims.put("id", id);
+        log.debug("向JWT中存用户名:{}", username);
+        log.debug("向JWT中存id:{}", id);
+
         // 以下是生成JWT的固定代码
         Date date = new Date(System.currentTimeMillis() + durationInMinute * 1000L);
         String jwt = Jwts.builder() // 构建者模式
@@ -96,7 +101,7 @@ public class AdminServiceImpl implements IAdminService {
                 .setHeaderParam("alg", "HS256") // 指定算法
                 .setHeaderParam("trp", "JWT") // 指定类型
                 // Payload 载荷
-                .setClaims(claims)
+                .setClaims(claims)// 传入数据Map
                 // Signature 签名
                 .setExpiration(date)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
