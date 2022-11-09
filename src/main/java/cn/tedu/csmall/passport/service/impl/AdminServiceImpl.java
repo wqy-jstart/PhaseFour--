@@ -16,6 +16,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,6 +35,13 @@ import java.util.*;
 @Slf4j
 @Service
 public class AdminServiceImpl implements IAdminService {
+
+    // 读取配置文件application-dev.yml中的自定义配置
+    @Value("${csmall.jwt.secret-key}")
+    private String secretKey;
+    @Value("${csmall.jwt.duration-in-minute}")
+    private long durationInMinute;
+
     // 注入管理员表的Mapper
     @Autowired
     private AdminMapper adminMapper;
@@ -64,24 +72,25 @@ public class AdminServiceImpl implements IAdminService {
         Authentication authentication
                 = new UsernamePasswordAuthenticationToken(
                 adminLoginDTO.getUsername(), adminLoginDTO.getPassword());
-        // 调用认证信息接口中的authenticate()方法传入认证器进行认证
-        Authentication authenticate
+        // 调用认证信息接口中的authenticate()方法传入认证器执行认证,返回认证结果
+        Authentication authenticateResult
                 = authenticationManager.authenticate(authentication);
         // 利用SecurityContextHolder获取上下文,并设置认证器中要认证的信息,保存到服务端的Session中(不推荐)
 //        SecurityContextHolder.getContext().setAuthentication(authenticate);
-        log.debug("认证通过,认证管理器返回:{}", authenticate);
+        log.debug("认证通过,认证管理器返回:{}", authenticateResult);
 
-        // 2.从认证结果中获取所需的数据,将用于生成JWT
-        Object principal = authenticate.getPrincipal();// 获取认证的当事人对象Principal
+        // 2.认证成功后,从认证结果中获取所需的数据,将用于生成JWT
+        Object principal = authenticateResult.getPrincipal();// 获取认证的当事人对象Principal
         log.debug("认证结果中的当事人类型:{}", principal.getClass().getName());// org.springframework.security.core.userdetails.User
-        User user = (User) principal; // 强转成User对象
+        User user = (User) principal; // 强转成User对象,这里的User就是UserDetails中的User
         String username = user.getUsername(); // 获取认证结果的用户名
 
-        // 生成JWT数据时,需要填充装到JWT中的数据
+        // 生成JWT数据时,需要将数据填充到JWT中
         Map<String, Object> claims = new HashMap<>();
+        // claims.put("id=" + id)
         claims.put("username", username);
-        String secretKey = "a9F8ujGDhjgFvfEd3SA90ukDS";// 类似于盐值
-        Date date = new Date(System.currentTimeMillis() + 5 * 24 * 60 * 60 * 1000L);
+        // 以下是生成JWT的固定代码
+        Date date = new Date(System.currentTimeMillis() + durationInMinute * 1000L);
         String jwt = Jwts.builder() // 构建者模式
                 // Header
                 .setHeaderParam("alg", "HS256") // 指定算法

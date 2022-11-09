@@ -3,8 +3,10 @@ Spring Security框架主要解决了什么问题？
 
 BCrypt算法的主要特点是什么？
 答:
-1.该算法在实现的过程中默认添加了随机盐,即使相同的原文,每次编码的密文都不相同,这样保证了加密后的安全性
-2.该算法被刻意设计为缓慢的,所以,可以有限避免穷举式的暴力破解,大大加强了破解的难度和成本
+1.该算法在实现的过程中默认添加了随机盐,即使相同的原文,每次编码的密文都不相同,
+这样保证了加密后的安全性
+2.该算法被刻意设计为缓慢的,所以,可以有限避免穷举式的暴力破解,
+大大加强了破解的难度和成本
 
 UUID的主要特点是什么？
 答:UUID具有随机和唯一性,从设计上,它能够保证在同一时空中的唯一性,应用广泛
@@ -13,7 +15,9 @@ UUID的主要特点是什么？
 http.formLogin()方法的作用是什么？
 答:
 重写前,该方法默认使用父类的构造方法super.configure(http),使得每一次请求都需要通过登录认证来完成
-重写后,可以在方法中自定义匹配白名单,使得某些路径不需要认证即可访问,还可以自定义启用登录表单http.formLogin(),以及选择禁用"防止伪造跨域攻击的机制"http.csrf().disable(),这是浏览器的安全措施
+重写后,可以在方法中自定义匹配白名单,使得某些路径不需要认证即可访问,
+还可以自定义启用登录表单http.formLogin(),以及选择禁用"防止伪造跨域攻击的机制"http.csrf().disable(),
+这是浏览器的安全措施
 
 配置请求认证的过程中，调用的mvcMatchers()方法的作用是什么？
 答:该方法用来传入可匹配路径
@@ -28,13 +32,25 @@ http.csrs().disable()的作用是什么？
 答:禁用"防止伪造跨域攻击的机制",这是浏览器的默认安全措施
 
 UserDetailsService的作用是什么？
-答:该接口定义了一个根据用户名加载用户的方法,Spring Security框架在进行认证时会自动调用该方法的实现类,当实现该方法后,可根据用户输入的用户名来进行验证,验证成功后需要将用户信息设置到Spring Security框架内置的一个User对象中,最终返回一个被User实现的接口UserDetail,最终作出返回以便认证
+答:该接口定义了一个根据用户名加载用户的方法,Spring Security框架在进行认证时会自动调用该方法的实现类,
+当实现该方法后,可根据用户输入的用户名来进行验证,验证成功后需要将用户信息设置到Spring Security框架
+内置的一个User对象中,最终返回一个被User实现的接口UserDetail,最终作出返回以便认证
 
 如何得到AuthenticationManager对象？
-答:在SecurityConfiguration配置类中,配置重写AuthenticationManager认证接口中的方法,并添加@Bean注解便于Spring进行管理,自动调用,自动装配
+答:在SecurityConfiguration配置类中,配置重写AuthenticationManager认证接口中的方法,
+并添加@Bean注解便于Spring进行管理,自动调用,自动装配
 
 当调用AuthenticationManager对象的authenticate()方法后，会发生什么？此方法的返回结果是什么？
-答:调用AuthenticationManager对象的authenticatie()方法后,传入通过UsernamePasswordAuthenticationToken()方法返回的引用(该方法用来传入认证需要的用户名和密码),进行认证,最终返回Authentication认证器接口的实例,来实例的引用包含了UserDetails认证前传入的所有信息
+答:调用AuthenticationManager对象的authenticatie()方法后,
+传入通过UsernamePasswordAuthenticationToken()方法返回的引用(该方法用来传入认证需要的用户名和密码),
+进行认证,最终返回Authentication认证器接口的实例,来实例的引用包含了UserDetails认证前传入的所有信息
 
 Spring Security如何判定某个请求是否已经通过认证？
-答:首先,接收用户登录的信息,在UserDetailsService接口实现类的重写中,拿到用户名进行验证,成功后返回UserDetails实例用于Spring Security认证时自动调用,在实现类中,创建UsernamePasswordAuthenticationToken类,在其构造器中传入登录的用户名和密码返回AuthenticationManager实例,最后调用AuthenticationManager认证信息来进行验证,验证成功后获取当事人对象,并转成User对象,获取用户名存到Map中,并添加标签以及算法和类型存放在JWT里,最终返回一个jwt值,用户得到JWT之后,携带JWT向服务器端提交请求,而服务器进行尝试解析,并且获取认证信息,创建认证对象,最后将返回的认证对象存入到SecurityContext上下文中,剩余由框架进行处理,判断是否通过认证.
+答:首先,接收用户登录的信息,在UserDetailsService接口实现类的重写中,拿到用户名进行验证,
+成功后返回UserDetails实例用于Spring Security认证时自动调用,在实现类中,
+创建UsernamePasswordAuthenticationToken类,在其构造器中传入登录的用户名和
+密码返回AuthenticationManager实例,最后调用AuthenticationManager认证信息来进行验证,
+验证成功后获取当事人对象,并转成User对象,获取用户名存到Map中,并添加标签以及算法和类型存放
+在JWT里,最终返回一个jwt值,用户得到JWT之后,携带JWT向服务器端提交请求,而服务器进行尝试解析,
+并且获取认证信息,创建认证对象,最后将返回的认证对象存入到SecurityContext上下文中,剩余由框架
+进行处理,判断是否通过认证.

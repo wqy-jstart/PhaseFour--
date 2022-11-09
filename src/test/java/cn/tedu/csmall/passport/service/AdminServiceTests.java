@@ -2,6 +2,8 @@ package cn.tedu.csmall.passport.service;
 
 import cn.tedu.csmall.passport.ex.ServiceException;
 import cn.tedu.csmall.passport.pojo.dto.AdminAddNewDTO;
+import cn.tedu.csmall.passport.web.JsonResult;
+import cn.tedu.csmall.passport.web.ServiceCode;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,5 +59,11 @@ public class AdminServiceTests {
     @Test
     void setDisable(){
         adminService.setEnable(12L);//将id为12设为启用
+    }
+
+    @Test
+    void test(){
+
+        System.out.println(JsonResult.fail(ServiceCode.ERR_DELETE,"错误"));
     }
 }

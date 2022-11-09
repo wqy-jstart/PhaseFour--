@@ -4,17 +4,24 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 测试JWT的生成和解析
+ *
+ * @Author java.@Wqy
+ * @Version 0.0.1
+ */
 @SpringBootTest
 public class JwtTests {
 
-    // 设置签名(一个签名对应一个JWT)
-    String secretKey = "a9F8ujGDhjgFvfEd3SA90ukDS";
+    @Value("${csmall.jwt.secret-key}")
+    private String secretKey;
 
     // 生成JWT
     @Test
@@ -43,6 +50,7 @@ public class JwtTests {
     // 解析JWT
     @Test
     public void parse() {
+        // 解析前需准备之前生成的JWT,和签名
         String jwt = "eyJhbGciOiJIUzI1NiIsInRycCI6IkpXVCJ9.eyJleHAiOjE2NjgzMjE1NjIsInVzZXJuYW1lIjoicm9vdCJ9._bSGd2e7fZ8XtWYzVJrxqSJ0dHaNqF4J0tPmSs6EXZk";
         Claims claims = Jwts.parser()
                 .setSigningKey(secretKey) // 设置需要解析的JWT签名

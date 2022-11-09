@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -73,7 +74,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/admins/login",
         };
 
-        // ???
+        // ★客户端请求时携带了请求头,称为复杂请求OPTIONS,该请求会经过预检机制(PreFlight),解决方案目前有两种
+        // 1.该方法会自动启用一个CorsFilter,这是Spring Security内置专门用于处理跨域问题的过滤器,也会对OPTIONS请求放行,效果完全相同!!
         http.cors();
 
         // 将"防止伪造跨域攻击的机制"禁用(如果不添加该配置,Post请求会403---浏览器的安全措施)
@@ -82,6 +84,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         // 添加这些方法,可以手动匹配进行随机认证-----链式写法
         // 提示: 关于请求路径的配置,如果同一路径对应多项配置规则,以第1次配置为准
         http.authorizeRequests() // 管理请求授权
+
+                  //2. ↓↓↓↓ 对所有OPTIONS请求直接放行 ↓↓↓↓↓
+//                .mvcMatchers(HttpMethod.OPTIONS,"/**")
+//                .permitAll()
+
                 .mvcMatchers(urls) // 可匹配的路径
                 .permitAll() // 直接许可,即可不需要通过认证即可访问
                 .anyRequest() // 除了以上配置过的以外的其他所有请求
