@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.validation.Valid;
 import java.util.List;
 
-@Api(tags = "管理员管理模块")
+@Api(tags = "01.管理员管理模块")
 @Slf4j
 @Validated
 @RequestMapping("/admins")
@@ -59,6 +60,7 @@ public class AdminController {
     // http://localhost:9081/admins/add-new
     @ApiOperation("添加管理员")
     @ApiOperationSupport(order = 100)
+    @PreAuthorize("hasAuthority('/ams/admin/add-new')")
     @PostMapping("/add-new")
     public JsonResult<Void> addNew(@Valid AdminAddNewDTO adminAddNewDTO){
         adminService.adNew(adminAddNewDTO);
@@ -74,6 +76,7 @@ public class AdminController {
     @ApiOperation("根据id删除管理员")
     @ApiOperationSupport(order = 200)
     @ApiImplicitParam(name = "id",value = "管理员id",required = true,dataType = "long")
+    @PreAuthorize("hasAuthority('/ams/admin/delete')")
     @PostMapping("/{id:[0-9]+}/delete")
     public JsonResult<Void> delete(@Range(min = 1,message = "删除管理员失败,尝试删除的管理员id无效") @PathVariable Long id){
         log.debug("开始处理[删除管理员]的请求,管理员id为{}",id);
@@ -84,13 +87,16 @@ public class AdminController {
     /**
      * 处理查询管理员列表的请求
      * @return JsonResult
+     * ★添加@ApiIgnore注解告诉Api文档忽略当前的输入框
+     * ★添加@AuthenticationPrincipal注解可使SpringSecurity去获取认证成功的当事人
      */
     // http://localhost:9081/admins
     @ApiOperation("管理员列表")
     @ApiOperationSupport(order = 210)//排序
+    @PreAuthorize("hasAuthority('/ams/admin/read')")
     @GetMapping("")
     public JsonResult<List<AdminListItemVO>> list(
-            @ApiIgnore @AuthenticationPrincipal LoginPrincipal loginPrincipal){// 添加@ApiIgnore注解告诉Api文档忽略当前的输入框
+            @ApiIgnore @AuthenticationPrincipal LoginPrincipal loginPrincipal){
         log.debug("开始处理[查询管理员列表]的请求,无参数");
         log.debug("当前登录的当事人:{}",loginPrincipal);
         List<AdminListItemVO> list = adminService.list();
@@ -106,6 +112,7 @@ public class AdminController {
     @ApiOperation("启用管理员")
     @ApiOperationSupport(order = 310)
     @ApiImplicitParam(name = "id",value = "启用的管理员id",required = true,dataType = "long")
+    @PreAuthorize("hasAuthority('/ams/admin/update')")
     @PostMapping("/{id:[0-9]+}/enable")
     public JsonResult<Void> setEnable(@Range(min = 1,message = "启用管理员失败,尝试启用的id无效!")
                                           @PathVariable Long id){
@@ -123,6 +130,7 @@ public class AdminController {
     @ApiOperation("禁用管理员")
     @ApiOperationSupport(order = 311)
     @ApiImplicitParam(name = "id",value = "禁用的管理员id",required = true,dataType = "long")
+    @PreAuthorize("hasAuthority('/ams/admin/update')")
     @PostMapping("/{id:[0-9]+}/disable")
     public JsonResult<Void> setDisable(@Range(min = 1,message = "禁用管理员失败,尝试启用的id无效!")
                                            @PathVariable Long id){

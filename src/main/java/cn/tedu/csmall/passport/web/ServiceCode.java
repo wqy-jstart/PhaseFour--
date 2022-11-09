@@ -25,9 +25,14 @@ public enum ServiceCode {
     ERR_UNAUTHORIZED(40100),
 
     /**
-     * 登录失败,账号被禁用
+     * 错误：未登录（账号被禁用）
      */
     ERR_UNAUTHORIZED_DISABLED(40200),
+
+    /**
+     * 错误: 无此权限
+     */
+    ERR_FORBIDDEN(40300),
 
     /**
      * 错误: 数据不存在

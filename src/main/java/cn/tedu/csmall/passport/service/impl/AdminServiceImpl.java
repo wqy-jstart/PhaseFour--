@@ -12,6 +12,7 @@ import cn.tedu.csmall.passport.pojo.vo.AdminStandardVO;
 import cn.tedu.csmall.passport.security.AdminDetails;
 import cn.tedu.csmall.passport.service.IAdminService;
 import cn.tedu.csmall.passport.web.ServiceCode;
+import com.alibaba.fastjson.JSON;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -83,18 +85,24 @@ public class AdminServiceImpl implements IAdminService {
         // 2.认证成功后,从认证结果中获取所需的数据,将用于生成JWT
         Object principal = authenticateResult.getPrincipal();// 获取认证的当事人对象Principal
         log.debug("认证结果中的当事人类型:{}", principal.getClass().getName());// cn.tedu.csmall.passport.security.AdminDetails
-        AdminDetails adminDetails = (AdminDetails) principal; // 强转成User对象,这里的User就是UserDetails中的User
-        String username = adminDetails.getUsername(); // 获取认证结果的用户名
-        Long id = adminDetails.getId();
+        AdminDetails adminDetails = (AdminDetails) principal;// 强转成AdminDetails当事人对象,这里的对象就是向SpringSecurity框架返回的UserDetails
 
-        // 生成JWT数据时,需要将数据填充到JWT中
+        // 3.获取认证结果
+        String username = adminDetails.getUsername();// 获取认证结果的用户名
+        Long id = adminDetails.getId();// 获取认证结果的id
+        Collection<GrantedAuthority> authorities = adminDetails.getAuthorities();// 获取认证结果的权限信息
+        String authoritiesJsonString = JSON.toJSONString(authorities);// ★将权限信息转换成JSON字符串
+
+        // 生成JWT数据前需要将数据填充到JWT中
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", username);
         claims.put("id", id);
-        log.debug("向JWT中存用户名:{}", username);
-        log.debug("向JWT中存id:{}", id);
+        claims.put("authoritiesJsonString",authoritiesJsonString);
+        log.debug("向JWT中存入用户名:{}", username);
+        log.debug("向JWT中存入id:{}", id);
+        log.debug("向JWT中存入authoritiesJsonString:{}",authoritiesJsonString);
 
-        // 以下是生成JWT的固定代码
+        // 4.生成JWT数据----以下是生成JWT的固定代码
         Date date = new Date(System.currentTimeMillis() + durationInMinute * 1000L);
         String jwt = Jwts.builder() // 构建者模式
                 // Header
@@ -107,7 +115,7 @@ public class AdminServiceImpl implements IAdminService {
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
         log.debug("生成的JWT：{}", jwt);
-        return jwt;// 返回认证后的JWT
+        return jwt;// 最终返回认证后的JWT
     }
 
     /**

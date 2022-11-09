@@ -114,23 +114,24 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 获取解析JWT后获取的用户名和id
+        // 获取解析JWT后的用户名和id
         String username = claims.get("username",String.class);
         Long id = claims.get("id",Long.class);
+        String authoritiesJsonString = claims.get("authoritiesJsonString", String.class);// 通过claims获取到权限的JSON字符串,指定String类型
         log.debug("从JWT中取出用户名:{}",username);
         log.debug("从JWT中取出id:{}",id);
+        log.debug("从JWT中取出authoritiesJsonString:{}",authoritiesJsonString);
 
-        // 添加权限信息
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        GrantedAuthority authority = new SimpleGrantedAuthority("这是一个假权限");
-        authorities.add(authority);
+        // 处理权限信息---将取出的权限字符串解析反序列化为Collection<? extends GrantedAuthority>格式的对象(List是其子类)
+        List<SimpleGrantedAuthority> authorities
+                = JSON.parseArray(authoritiesJsonString, SimpleGrantedAuthority.class);
 
         // 创建一个登录时的当事人对象,传入解析后的用户名和id
         LoginPrincipal loginPrincipal = new LoginPrincipal(username,id);
         // 创建一个UsernamePasswordAuthenticationToken,传入用户名和权限信息,返回Authentication认证器对象
         Authentication authentication
                 = new UsernamePasswordAuthenticationToken(
-                        loginPrincipal,null,authorities);
+                        loginPrincipal,null,authorities);// 传入处理后的权限信息对象authorities
 
         // 将Authentication对象的引用存入到SecurityContext上下文中(Spring规定)
         log.debug("向SecurityContext中存入认证信息:{}",authentication);

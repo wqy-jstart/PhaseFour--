@@ -134,22 +134,42 @@
     <select id="getLoginInfoByUsername" resultMap="LoginResultRM">
         SELECT
         <include refid="LoginQueryFields"/>
-        FROM ams_admin
-        WHERE username=#{username}
+        FROM
+             ams_admin
+        LEFT JOIN ams_admin_role
+            ON ams_admin.id = ams_admin_role.admin_id
+        LEFT JOIN ams_role_permission
+            ON ams_admin_role.role_id = ams_role_permission.role_id
+        LEFT JOIN ams_permission
+            ON ams_role_permission.permission_id = ams_permission.id
+        WHERE
+              username=#{username}
     </select>
 
     <!--封装查询登录的字段-->
     <sql id="LoginQueryFields">
         <if test="true">
-            id,username,password,enable
-            enable, last_login_ip, login_count,gmt_last_login
+            ams_admin.id,
+            ams_admin.username,
+            ams_admin.password,
+            ams_admin.enable,
+            ams_permission.value
         </if>
     </sql>
 
+    <!-- 在1对多的查询中，List属性需要使用collection标签来配置 -->
+    <!-- collection标签的property属性：封装查询结果的类型中的属性名，即List的属性名 -->
+    <!-- collection标签的ofType属性：List的元素数据类型，取值为类型的全限定名 -->
+    <!-- collection标签的子级：如何将查询结果中的数据封装成ofType类型的对象 -->
     <resultMap id="LoginResultRM" type="cn.tedu.csmall.passport.pojo.vo.AdminLoginInfoVO">
         <id column="id" property="id"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
         <result column="enable" property="enable"/>
+        <collection property="permissions" ofType="java.lang.String">
+            <constructor>
+                <arg column="value"/>
+            </constructor>
+        </collection>
     </resultMap>
 </mapper>

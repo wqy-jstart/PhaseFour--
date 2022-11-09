@@ -47,8 +47,10 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
         // 添加权限信息
         List<GrantedAuthority> authorities = new ArrayList<>();
-        GrantedAuthority authority = new SimpleGrantedAuthority("这是一个假权限");
-        authorities.add(authority);
+        for (String permission : admin.getPermissions()) {// 向AdminLoginInfoVO中获取所有的权限,做遍历
+            GrantedAuthority authority = new SimpleGrantedAuthority(permission);// 将遍历的每一个权限放到该容器内
+            authorities.add(authority);
+        }
 
         // 使用新建的继承Spring Security的类AdminDetails来返回信息便于认证
         AdminDetails adminDetails = new AdminDetails(

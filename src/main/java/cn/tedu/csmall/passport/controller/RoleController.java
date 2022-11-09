@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Api(tags = "角色管理模块")
+@Api(tags = "02.角色管理模块")
 @Slf4j
 @Validated
 @RequestMapping("/roles")
