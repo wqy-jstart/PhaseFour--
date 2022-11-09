@@ -1,0 +1,66 @@
+- 相比Session机制，JWT最大的优点是什么？
+答:
+相比Session机制,JWT最大的优点是可以自定义长时间保存数据
+Session是内存中的数据,所有来访的客户端都由对应的Session数据,故因防止多次请求造成的内存浪费,
+限制了保存时间,而JWT可以给登录且认证成功的用户发送一个jwt字符串,用户在请求时只需携带该字符
+串就可以获取访问,可以在生成JWT字符串时并设置时间,使得用户在指定的时间范围内不需要频繁的登录进行访问
+
+- 在Spring Security的配置类的`void configurer(HttpSecurity http)`方法中，`http.cors()`的作用是什么？
+答:
+当客户端请求时携带了请求头,此次请求会成为复杂请求,会经过预检机制,在配置类中添加该方法,
+该方法会自动启动一个CorsFilter,这是Spring Security内置专门用来处理跨域问题的过滤器,
+也会对OPTIONS这种特殊请求放行
+
+- 根据业内惯用的作法，客户端应该如何携带JWT数据向服务器提交请求？
+答:
+客户端只需在发送axios请求时,调用.create()方法,该方法会返回一个axios对象,
+在该方法内设置一个headers请求头,并将请求头的名字指定为Authorization,
+然后利用DOM中的localStorage来调用getItem传入登录时设置并保存
+到localStorage中的jwt即可实现携带JWT数据向服务器提交请求
+
+- 在服务器端，为什么要使用过滤器而不是其它组件来解析JWT？
+答:
+在过滤器组件中解析JWT可以提前检验用户携带的JWT是否正确,
+若检验不通过,用户也没有必要执行后续的操作,这样也可以减少服务器的压力
+在过滤器中进行解析还可以根据用户携带的JWT,来捕获对应的异常来反馈给浏览器,
+这样又进一步减轻了服务端处理异常的压力,这样以来,服务端仅会收到通过JWT验证的用户,
+只需将重心放在认证和返回认证结果保存到SpringSecurityContext上下文中即可,并处理除JWT问题以外的异常!
+
+- 在服务器端，JWT过滤器的主要作用是？
+答:
+1.获取客户端携带的JWT,并进行检验,不通过会放行
+2.若通过检验,过滤器会对用户携带的JWT进行解析,并捕获解析过程中可能发生的异常
+3.若通过检验且未出现异常,过滤器会取出解析JWT后的用户名和id,并封装到登录时的当事人对象LoginPrincipal中
+4.JWT过滤器会处理权限信息,将对从数据库中关联查询到的权限信息进行获取,并解析反序列
+化为Collection<? extends GrantedAuthority>格式的对象,然后和当事人信息一同放入认证信息中,
+最终保存到SecurityContext上下文里
+
+- 如果客户端提交的请求没有携带JWT，服务器端的JWT过滤器应该如何处理？
+答:
+如果客户端提交的请求没有携带JWT,说明客户端是初次登录,则会被放行到服务器中进行认证,
+这时SpringSecurity会自动调用loadUserByUsername()方法对信息进行验证,成功后会封装
+到AdminDetails对象中作出返回,此时在实现类中拿到客户端登录的用户名和密码进行认证,
+认证成功后会返回认证结果(该结果就是loadUserByUsername()方法中返回的AdminDetails),
+通过认证结果获取当事人对象Principal(默认返回Object类型)并强转成认证结果中当事人的类型,
+并通过当事人来get里面的认证信息填充到JWT的Payload(载荷)中,设置时间和类型,最终
+生成jwt字符串并返回给客户端,当下次客户端请求时,只需携带服务器给得JWT即可
+
+- 在Spring Security的配置类的`void configurer(HttpSecurity http)`方法中，
+为什么要通过`http.addFilter()`系列方法添加JWT过滤器？
+答:
+如果不通过这些方法添加JWT过滤器,Spring中有很多的过滤器,这可能会使得用户的请求
+无法通过JWT过滤器进行过滤验证,使得程序出现不可避免的规则问题,当在配置类中添加
+了过滤器后,会将JWT过滤器添加到SpringSecurity框架的过滤器链中,使得用户
+在登录或请求后一定会经过该过滤器,保证了程序的稳定
+
+- 在服务器端，控制器处理请求时，如何获取当事人信息？
+答:在控制器方法参数列表中添加当事人对象LoginPrincipal以及@AuthenticationPrincipal注解,
+该注解会自动让SpringSecurity去获取认证成功后的当事人信息,
+给到当前参数列表中的当事人对象,最终可进行输出!
+
+- 在服务器端，如何配置方法级别的权限？
+答:在Security配置类中添加@EnableGlobalMethodSecurity注解,
+并将注解中boolean proxyTargetClass() default false默认false的状态改为
+启用状态true,这样即可启用方法级别的权限检查,之后可在控制器类中对应的
+方法上添加@PreAuthorize注解,并配置相应的权限,捕获对应无权访问的异常,
+即可实现过滤不含该权限的用户请求
