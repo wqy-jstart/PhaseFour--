@@ -121,7 +121,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Spring Security框架----没有权限访问
+     * Spring Security框架----没有权限访问----通过认证,但没权限,故由全局异常来处理
      *
      * @param e AccessDeniedException
      * @return 返回因权限受限而无法访问的异常
