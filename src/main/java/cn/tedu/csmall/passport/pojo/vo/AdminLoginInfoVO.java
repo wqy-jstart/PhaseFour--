@@ -35,6 +35,6 @@ public class AdminLoginInfoVO {
     /**
      * 权限列表
      */
-    private List<String> Permissions;
+    private List<String> permissions;
 
 }

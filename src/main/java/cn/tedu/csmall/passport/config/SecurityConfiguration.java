@@ -45,8 +45,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /**
      * 重写认证信息接口
-     * @return
-     * @throws Exception
+     * @return AuthenticationManager
+     * @throws Exception Exception
      */
     @Bean// 该注解便于Spring框架进行管理,自动调用,放入容器,利于自动装配
     @Override

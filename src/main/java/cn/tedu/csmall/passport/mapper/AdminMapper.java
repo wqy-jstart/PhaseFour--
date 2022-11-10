@@ -89,7 +89,7 @@ public interface AdminMapper {
     /**
      * 根据用户名查询登录的信息
      * @param username 用户名
-     * @return 返回登录的VO类信息
+     * @return 返回登录的VO类信息(id,username,password,enable,permissions)
      */
     AdminLoginInfoVO getLoginInfoByUsername(String username);
 

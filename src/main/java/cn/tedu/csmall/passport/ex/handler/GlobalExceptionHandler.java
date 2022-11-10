@@ -28,7 +28,6 @@ import java.util.StringJoiner;
  * @Version 0.0.1
  */
 @Slf4j
-@ControllerAdvice
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
