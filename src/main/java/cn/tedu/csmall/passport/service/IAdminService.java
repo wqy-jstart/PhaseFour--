@@ -34,7 +34,7 @@ public interface IAdminService {
      * 根据id删除管理员
      * @param id 要删除的管理员id
      */
-    void  delete(Long id);
+    void delete(Long id);
 
     /**
      * 查询管理员列表的方法

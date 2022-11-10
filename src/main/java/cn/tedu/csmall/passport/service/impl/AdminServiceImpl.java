@@ -90,20 +90,20 @@ public class AdminServiceImpl implements IAdminService {
         // 3.获取认证结果
         String username = adminDetails.getUsername();// 获取认证结果的用户名
         Long id = adminDetails.getId();// 获取认证结果的id
-        Collection<GrantedAuthority> authorities = adminDetails.getAuthorities();// 获取认证结果的权限信息
-        String authoritiesJsonString = JSON.toJSONString(authorities);// ★将权限信息转换成JSON字符串
+        Collection<GrantedAuthority> authorities = adminDetails.getAuthorities();// 获取认证结果的权限信息,Granted Authorities=[?,?...]
+        String authoritiesJsonString = JSON.toJSONString(authorities);// ★将权限信息转换成JSON字符串,authoritiesJsonString:[{"authority":"?"},{"authority":"?"}...]
 
         // 生成JWT数据前需要将数据填充到JWT中
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", username);
         claims.put("id", id);
-        claims.put("authoritiesJsonString",authoritiesJsonString);
+        claims.put("authoritiesJsonString", authoritiesJsonString);
         log.debug("向JWT中存入用户名:{}", username);
         log.debug("向JWT中存入id:{}", id);
-        log.debug("向JWT中存入authoritiesJsonString:{}",authoritiesJsonString);
+        log.debug("向JWT中存入authoritiesJsonString:{}", authoritiesJsonString);
 
         // 4.生成JWT数据----以下是生成JWT的固定代码
-        Date date = new Date(System.currentTimeMillis() + durationInMinute * 1000L);
+        Date date = new Date(System.currentTimeMillis() + durationInMinute * 60 * 1000L);
         String jwt = Jwts.builder() // 构建者模式
                 // Header
                 .setHeaderParam("alg", "HS256") // 指定算法

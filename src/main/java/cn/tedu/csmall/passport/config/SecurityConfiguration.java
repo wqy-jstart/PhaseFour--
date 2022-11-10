@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 /**
  * 创建Spring Security的配置类
- * 配置放行路径,登录页面,认证授权,禁用"防止伪造跨域攻击的机制"
+ * 配置放行路径,登录页面,认证授权,禁用"防止伪造跨域攻击的机制",通过预检机制
  *
  * @Author java.@Wqy
  * @Version 0.0.1

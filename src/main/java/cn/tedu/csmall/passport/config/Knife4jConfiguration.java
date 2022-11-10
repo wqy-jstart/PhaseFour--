@@ -41,11 +41,11 @@ public class Knife4jConfiguration {
     /**
      * 标题
      */
-    private String title = "Wqy的商城在线API文档--商品管理";
+    private String title = "风尘六侠在线API文档--管理模块";
     /**
      * 简介
      */
-    private String description = "Wqy的商城在线API文档--管理员管理";
+    private String description = "风尘六侠在线API文档--管理员管理";
     /**
      * 服务条款URL
      */
