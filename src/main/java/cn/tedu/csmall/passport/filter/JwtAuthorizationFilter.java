@@ -58,6 +58,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         log.debug("JwtAuthorizationFilter开始执行过滤...");
 
+        // 清空Security上下文
+        // Security上下文中的认证信息也会被清除
+        // 避免前序携带JWT且解析成功后将认证信息存入Security上下文后,后续不携带JWT也能访问的"问题"
+        SecurityContextHolder.clearContext();
+
         // 获取请求头'Authorization'中的JWT内容
         String jwt = request.getHeader("Authorization");// Authorization授权,批准
         log.debug("获取客户端携带的JWT:{}", jwt);
@@ -133,7 +138,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 = new UsernamePasswordAuthenticationToken(
                         loginPrincipal,null,authorities);// 传入处理后的权限信息对象authorities
 
-        // 将Authentication对象的引用存入到SecurityContext上下文中(Spring规定)
+        // 将Authentication对象的引用存入到SecurityContext上下文中(Spring规定),【上下文中包含有效的认证信息】
         log.debug("向SecurityContext中存入认证信息:{}",authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);// 将认证信息放到Security Context上下文中
 

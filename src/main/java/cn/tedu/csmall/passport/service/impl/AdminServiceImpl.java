@@ -69,25 +69,29 @@ public class AdminServiceImpl implements IAdminService {
     public String login(AdminLoginDTO adminLoginDTO) {
         log.debug("开始处理[管理员登录]的业务,参数:{}", adminLoginDTO);
 
-        // 1.执行认证
+        // 1.处理认证
         //创建一个认证器,实例化UsernamePasswordAuthenticationToken类,传入需要认证的用户名和密码
         Authentication authentication
                 = new UsernamePasswordAuthenticationToken(
                 adminLoginDTO.getUsername(), adminLoginDTO.getPassword()
         );
-        // 调用认证信息接口中的authenticate()方法传入认证器执行认证,返回认证结果
+        /* 【开始认证】
+            会通过参数中的"用户名"来调用UserDetailsService接口类型的对象的loadUserByUsername()方法，
+            当得到此方法的返回结果后，自动执行后续的判断(例如密码是否匹配,账号是否被禁用)
+            认证通过后会返回Authentication接口类型对象,包含(Principal（当事人）、Credentials（凭证）、Authorities（权限清单）)
+         */
         Authentication authenticateResult
                 = authenticationManager.authenticate(authentication);
         // 利用SecurityContextHolder获取上下文,并设置认证器中要认证的信息,保存到服务端的Session中(不推荐)
-//        SecurityContextHolder.getContext().setAuthentication(authenticate);
+//        SecurityContextHolder.getContext().setAuthentication(authenticateResult);
         log.debug("认证通过,认证管理器返回:{}", authenticateResult);
 
-        // 2.认证成功后,从认证结果中获取所需的数据,将用于生成JWT
+        // 2.【认证成功后,从认证结果中获取当事人对象,将用于生成JWT】
         Object principal = authenticateResult.getPrincipal();// 获取认证的当事人对象Principal
         log.debug("认证结果中的当事人类型:{}", principal.getClass().getName());// cn.tedu.csmall.passport.security.AdminDetails
         AdminDetails adminDetails = (AdminDetails) principal;// 强转成AdminDetails当事人对象,这里的对象就是向SpringSecurity框架返回的UserDetails
 
-        // 3.获取认证结果
+        // 3.【获取认证结果】
         String username = adminDetails.getUsername();// 获取认证结果的用户名
         Long id = adminDetails.getId();// 获取认证结果的id
         Collection<GrantedAuthority> authorities = adminDetails.getAuthorities();// 获取认证结果的权限信息,Granted Authorities=[?,?...]
@@ -102,7 +106,7 @@ public class AdminServiceImpl implements IAdminService {
         log.debug("向JWT中存入id:{}", id);
         log.debug("向JWT中存入authoritiesJsonString:{}", authoritiesJsonString);
 
-        // 4.生成JWT数据----以下是生成JWT的固定代码
+        // 4.【生成JWT数据】----以下是生成JWT的固定代码
         Date date = new Date(System.currentTimeMillis() + durationInMinute * 60 * 1000L);
         String jwt = Jwts.builder() // 构建者模式
                 // Header
