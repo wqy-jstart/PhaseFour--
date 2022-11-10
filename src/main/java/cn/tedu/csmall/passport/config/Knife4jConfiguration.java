@@ -41,7 +41,7 @@ public class Knife4jConfiguration {
     /**
      * 标题
      */
-    private String title = "风尘六侠在线API文档--管理模块";
+    private String title = "风尘六侠在线API文档--管理员管理模块";
     /**
      * 简介
      */
