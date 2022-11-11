@@ -1,9 +1,6 @@
 package cn.tedu.csmall.passport.security;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
@@ -16,11 +13,10 @@ import java.util.Collection;
  * @Author java.@Wqy
  * @Version 0.0.1
  */
-
 @Setter
 @Getter
 @ToString(callSuper = true)// 先把父类的toString()调用
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false) // 自动生成hashCode()方法和equals()方法
 public class AdminDetails extends User {
 
     private Long id;

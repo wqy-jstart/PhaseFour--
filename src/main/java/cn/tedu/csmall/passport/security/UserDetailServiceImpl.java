@@ -19,7 +19,7 @@ import java.util.List;
  * 基于Spring Security的登录认证创建的用户登录的(UserDetailsService接口)实现类
  * 最终返回UserDetails,以便进行认证
  *
- * @java.@Wqy
+ * @Author java.@Wqy
  * @Version 0.0.1
  */
 @Slf4j

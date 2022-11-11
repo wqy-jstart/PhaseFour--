@@ -14,8 +14,8 @@ import java.io.Serializable;
  * @Version 0.0.1
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor // 添加无参构造
+@AllArgsConstructor// 添加全参构造
 public class LoginPrincipal implements Serializable {
 
     private String username;
