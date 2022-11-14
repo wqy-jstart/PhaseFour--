@@ -77,7 +77,7 @@ public class AdminServiceImpl implements IAdminService {
         );
         /* 【开始认证】
             会通过参数中的"用户名"来调用UserDetailsService接口类型的对象的loadUserByUsername()方法，
-            当得到此方法的返回结果后，自动执行后续的判断(例如密码是否匹配,账号是否被禁用)
+            当得到此方法的返回结果后，自动执行后续的判断,错误时抛出Spring Security框架对应的异常(例如密码是否匹配,账号是否被禁用)
             认证通过后会返回Authentication接口类型对象,包含(Principal（当事人）、Credentials（凭证）、Authorities（权限清单）)
          */
         Authentication authenticateResult
