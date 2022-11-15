@@ -1,6 +1,7 @@
 package cn.tedu.csmall.passport.service;
 
 import cn.tedu.csmall.passport.pojo.vo.RoleListItemVO;
+import cn.tedu.csmall.passport.pojo.vo.RoleStandardVO;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -19,4 +20,16 @@ public interface IRoleService {
      * @return List
      */
     List<RoleListItemVO> list();
+
+    /**
+     * 根据id查询角色的详情
+     * @param id 角色id
+     * @return 返回角色的详情VO类
+     */
+    RoleStandardVO standardById(Long id);
+
+    /**
+     * 重建缓存
+     */
+    void rebuildCache();
 }

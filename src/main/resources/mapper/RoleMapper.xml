@@ -5,8 +5,15 @@
 
     <!--List<RoleListItemVO> list();-->
     <select id="list" resultType="cn.tedu.csmall.passport.pojo.vo.RoleListItemVO">
-        SELECT id,name,description,sort
+        SELECT id, name, description, sort
         FROM ams_role
         ORDER BY id
+    </select>
+
+    <!--RoleStandardVO standardById(Long id);-->
+    <select id="standardById" resultType="cn.tedu.csmall.passport.pojo.vo.RoleStandardVO">
+        SELECT id, name, description, sort
+        FROM ams_role
+        WHERE id = #{id}
     </select>
 </mapper>
