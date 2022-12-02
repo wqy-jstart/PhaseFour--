@@ -24,6 +24,7 @@ public class AdminServiceTests {
     @Test
     void addNew(){
         log.debug("开始处理添加管理员的请求!");
+        Long[] ids = {2L,3L};
         AdminAddNewDTO adminAddNewDTO = new AdminAddNewDTO();
         adminAddNewDTO.setUsername("武清源");
         adminAddNewDTO.setPassword("123456");
@@ -33,6 +34,7 @@ public class AdminServiceTests {
         adminAddNewDTO.setEmail("2168149199@qq.com");
         adminAddNewDTO.setDescription("无");
         adminAddNewDTO.setEnable(1);
+        adminAddNewDTO.setRoleIds(ids);
         try{
             adminService.adNew(adminAddNewDTO);
             log.debug("添加数据成功!");
@@ -41,12 +43,12 @@ public class AdminServiceTests {
         }
     }
 
-    @Test
-    void delete(){
-        Long id = 30L;
-        adminService.delete(id);
-        log.debug("删除成功!");
-    }
+//    @Test(提前注释,防止打包异常)
+//    void delete(){
+//        Long id = 30L;
+//        adminService.delete(id);
+//        log.debug("删除成功!");
+//    }
 
     @Test
     void list(){
@@ -56,10 +58,10 @@ public class AdminServiceTests {
         }
     }
 
-    @Test
-    void setDisable(){
-        adminService.setEnable(12L);//将id为12设为启用
-    }
+//    @Test(提前注释,防止打包异常)
+//    void setDisable(){
+//        adminService.setEnable(1L);//将id为12设为启用
+//    }
 
     @Test
     void test(){

@@ -47,19 +47,19 @@ public class JwtTests {
         // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OTUyNywiZXhwIjoxNjY3ODc5MDU5LCJ1c2VybmFtZSI6ImZhbmNodWFucWkifQ.ZcMcg9XtUF0Q1-gOOjP3mAr4hMh2fFYE8r6cB20t50Q
     }
 
-    // 解析JWT
-    @Test
-    public void parse() {
-        // 解析前需准备之前生成的JWT,和签名
-        String jwt = "eyJhbGciOiJIUzI1NiIsInRycCI6IkpXVCJ9.eyJleHAiOjE2NjgzMjE1NjIsInVzZXJuYW1lIjoicm9vdCJ9._bSGd2e7fZ8XtWYzVJrxqSJ0dHaNqF4J0tPmSs6EXZk";
-        Claims claims = Jwts.parser()
-                .setSigningKey(secretKey) // 设置需要解析的JWT签名
-                .parseClaimsJws(jwt) // 拿到需要解析的JWT代码
-                .getBody();
-
-        // <T> T get(String var1, Class<T> var2)该重载可返回自定义的数据类型
-        Long id = claims.get("id",Long.class);
-        String username = claims.get("username",String.class);
-        System.out.println("id=" + id + ";用户名=" + username);
-    }
+    // 解析JWT(提前注释,防止JWT过期无法解析)
+//    @Test
+//    public void parse() {
+//        // 解析前需准备之前生成的JWT,和签名
+//        String jwt = "eyJhbGciOiJIUzI1NiIsInRycCI6IkpXVCJ9.eyJleHAiOjE2NjgzMjE1NjIsInVzZXJuYW1lIjoicm9vdCJ9._bSGd2e7fZ8XtWYzVJrxqSJ0dHaNqF4J0tPmSs6EXZk";
+//        Claims claims = Jwts.parser()
+//                .setSigningKey(secretKey) // 设置需要解析的JWT签名
+//                .parseClaimsJws(jwt) // 拿到需要解析的JWT代码
+//                .getBody();
+//
+//        // <T> T get(String var1, Class<T> var2)该重载可返回自定义的数据类型
+//        Long id = claims.get("id",Long.class);
+//        String username = claims.get("username",String.class);
+//        System.out.println("id=" + id + ";用户名=" + username);
+//    }
 }
