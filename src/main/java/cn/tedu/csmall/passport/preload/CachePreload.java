@@ -48,14 +48,6 @@ public class CachePreload implements ApplicationRunner {
         log.debug("准备将品牌列表写入到Redis缓存...");
         roleRedisRepository.save(list);// 利用角色的Redis接口调用save转入要保存的列表,加载到缓存中
         log.debug("将品牌列表写入到Redis缓存，完成！");
-
-        log.debug("准备将各角色详情写入Redis缓存...");
-        for (RoleListItemVO roleListVO : list) {// 遍历拿到的角色列表
-            Long id = roleListVO.getId();// 获取遍历的每个角色列表的id
-            RoleStandardVO roleStandardVO = roleMapper.standardById(id);// 利用拿到的id来查询对应的角色详情
-            roleRedisRepository.save(roleStandardVO);// 将每一个角色详情放到Redis缓存中
-        }
-        log.debug("将各品牌详情写入到Redis缓存中,完成!");
     }
 
 }
